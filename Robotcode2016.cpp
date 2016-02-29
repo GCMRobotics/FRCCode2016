@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "Math.h"
 #include "WPILib.h"
+#include <Joystick.h>
 
 class Robot: public IterativeRobot {
 	Talon left, right, frontarm, ballshooter; //initiates pins for talon actuators
@@ -9,7 +10,7 @@ class Robot: public IterativeRobot {
 	RobotDrive myRobot; //RobotDrive controls two Pins
 	Joystick xbox;//1st controller
 	Joystick xbox2;//2nd controller
-	Timer time; //This is a WPILib timer for autonomus
+	Timer time; //This is a WPILib timer for autonomous
 	float leftFollow = 0.0F, rightFollow = 0.0F, frontarmFollow = 0.0F, speedLimit = 0.75F,
 			liftreturn = 0.0f, leftlift = 0.0F, leftright = 0.0F, liftdown = 0.0F ;
 	//Floats are rational numbers that can be manipulated for a numerous amount of purposes
@@ -27,7 +28,7 @@ public:
 		CameraServer::GetInstance()->StartAutomaticCapture("cam0");//The Camera is USB enabled and attached to the Roborio, the driver station has an option to access each USB port, the Camera was located on the HW USB Port
 	}
 private:
-	//AnalogInput ai = new AnalogInput(0);
+
 	void AutonomousInit() { //Function that initializes any variables in the autonomous stage, runs once
 		myRobot.SetSafetyEnabled(false);
 //Turns off the robot safety feature, it's really not necessary outside of the TeleOp phase, this just checks for if there are too many inputs/outputs at any point in time
@@ -87,31 +88,25 @@ private:
 
 	void TeleopPeriodic() { //Periodic Tele-Operation function, this function runs as a loop for the period of the TeleOp portion of the competition
 		float left = xbox.GetRawAxis(1), right = xbox.GetRawAxis(5), frontarmAxis;//Initializes more floats, but the left and right floats get inputs from the xbox joystick, they recieve raw inputs form Axis 1 nad 5, these are the Y-Axis on each of the two "joysticks" on the xbox controller
-		float liftup = logitech.GetRawAxis(1);
-		//float liftdown = xbox.GetRawAxis(3);
+		float liftup = xbox.GetRawButton(5);
+		float liftdown = xbox.GetRawButton(6);
 		float ballshooterSpeed = xbox.GetRawButton(7);
 		float frontarmSpeed =xbox.GetRawButton(6);
 
-		//float lifting = liftdown + liftup;
 		bool ballsuckerin = xbox.GetRawButton(4);
 		bool ballsuckerout = xbox.GetRawButton(1);
-		//float printf (xbox.GetRawAxis(0));
-		//liftright.SetSpeed(liftdown);
-		//liftleft.SetSpeed(liftdown);
 
-		//float ballshooterSpeed = xbox.GetRawButton(4);
-		bool ballsucker = xbox.GetRawButton(2);
-		bool frontarmUp =logitech.GetRawButton(5); //changed by kemal, normally 5
-		bool frontarmDown = logitech.GetRawButton(3); //changed by kemal, normally 5
-		//float printf (xbox.GetRawAxis(0));
-		//liftleft.SetSpeed(liftdown*-1);
-		//liftright.SetSpeed(liftdown*-1);
+
+
+
+		bool frontarmUp =xbox.GetRawButton(5);
+		bool frontarmDown = xbox.GetRawButton(3);
 		liftleft.SetSpeed(liftup);
 		liftright.SetSpeed(liftup);
 		ballshooter.SetSpeed(ballshooterSpeed);
 
 
-		frontarmAxis = frontarmSpeed; //Math, not much to explain here.
+		frontarmAxis = frontarmSpeed;
 		leftFollow += (left - leftFollow) / 2; //+= adds the following values ((left - leftFollow)/2) to the former value (leftFollow)
 		rightFollow += (left - leftFollow) / 2; //Again
 		frontarmFollow += (frontarmAxis - frontarmFollow) / 2; //Agaaaaaaaaaaain  ITS YUUUGEEE
